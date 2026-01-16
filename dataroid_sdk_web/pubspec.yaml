@@ -1,0 +1,31 @@
+name: dataroid_sdk_web
+description: Web platform implementation of dataroid_sdk
+author: Dataroid SDK Team <sdk@dataroid.com>
+homepage: https://github.com/dataroid/sdk-flutter
+version: 4.0.0
+
+flutter:
+  assets:
+    - assets/dataroid-websdk.js
+  plugin:
+    platforms:
+      web:
+        pluginClass: DataroidSdkPlugin
+        fileName: dataroid_flutter_web.dart
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  dataroid_sdk_platform_interface:
+    path: ../dataroid_sdk_platform_interface
+  meta: ^1.1.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+environment:
+  sdk: ">=2.17.0"
+  flutter: ">=2.0.0"

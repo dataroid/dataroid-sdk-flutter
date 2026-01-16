@@ -1,0 +1,28 @@
+name: dataroid_sdk_ios
+description: iOS implementation of Dataroid SDK
+version: 4.0.0
+homepage: https://www.dataroid.com
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dataroid_sdk_platform_interface:
+    path: ../dataroid_sdk_platform_interface
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    implements: dataroid_plugin_flutter
+    platforms:
+      ios:
+        pluginClass: DataroidSdkIosPlugin
+        dartPluginClass: DataroidSdkIos
+

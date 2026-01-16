@@ -1,0 +1,24 @@
+name: dataroid_sdk_platform_interface
+description: A common platform interface for the dataroid_sdk plugin.
+author: Dataroid SDK Team <sdk@dataroid.com>
+homepage: https://github.com/dataroid/sdk-flutter
+# NOTE: We strongly prefer non-breaking changes, even at the expense of a
+# less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
+version: 4.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.0.5
+  plugin_platform_interface: ^2.1.7
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+
+environment:
+  sdk: ">=3.0.0 < 4.0.0"
+  flutter: ">=2.0.0"

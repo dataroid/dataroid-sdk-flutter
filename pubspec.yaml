@@ -1,0 +1,39 @@
+name: dataroid_plugin_flutter
+description: Dataroid Plugin Flutter
+version: 4.0.0
+homepage: https://www.dataroid.com
+publish_to: none
+
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+  # use the exact flutter version to make github actions dynamic
+  # https://github.com/subosito/flutter-action?tab=readme-ov-file#use-version-from-pubspecyaml
+  flutter: "3.16.0"  
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dataroid_sdk_platform_interface:
+    path: dataroid_sdk_platform_interface
+  dataroid_sdk_android:
+    path: dataroid_sdk_android
+  dataroid_sdk_ios:
+    path: dataroid_sdk_ios
+  dataroid_sdk_web:
+    path: dataroid_sdk_web
+  path_provider: ^2.1.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.24.3
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: dataroid_sdk_android
+      ios:
+        default_package: dataroid_sdk_ios
+      web:
+        default_package: dataroid_sdk_web

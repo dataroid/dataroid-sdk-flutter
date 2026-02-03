@@ -90,15 +90,37 @@ class DataroidSdkPlugin extends DataroidSdkPlatform {
         return clearUser();
 
       case 'setSuperAttribute':
-        return setSuperAttribute(
-            call.arguments["key"],
-            safeJsonDecode(call.arguments["value"])
-        );
+        // In v4, value is sent directly without JSON encoding
+        // For DateTime, it's sent as 'dateAttributes' with milliseconds
+        final key = call.arguments["key"];
+        if (key == null || key is! String) {
+          print('[DATAROID/WEB] setSuperAttribute: invalid key type');
+          return Future.value(false);
+        }
+        
+        final dateMs = call.arguments["dateAttributes"];
+        final value = call.arguments["value"];
+        
+        // If dateAttributes exists, it's a DateTime that needs conversion
+        if (dateMs != null && dateMs is num) {
+          return setSuperAttributeDate(key, dateMs.toDouble());
+        } else if (value != null) {
+          return setSuperAttribute(key, value);
+        } else {
+          return Future.value(false);
+        }
 
       case 'clearSuperAttribute':
         return clearSuperAttribute(
             call.arguments["key"]
         );
+
+      case 'clearAllSuperAttributes':
+        return clearAllSuperAttributes();
+
+      case 'getAllSuperAttributes':
+        print('[DATAROID/WEB] getAllSuperAttributes is not supported on web platform');
+        return Future.value(false);
 
       case 'httpCall':
         return httpCall(
@@ -289,9 +311,34 @@ class DataroidSdkPlugin extends DataroidSdkPlatform {
     return true;
   }
 
+  Future<bool> setSuperAttributeDate(String key, double milliseconds) async {
+    try {
+      // Validate timestamp range to prevent overflow
+      // Valid range: ~1970-01-01 to ~2100-01-01
+      if (milliseconds < 0 || milliseconds > 4102444800000) {
+        print('[DATAROID/WEB] Invalid timestamp value: $milliseconds');
+        return false;
+      }
+      
+      // Convert milliseconds to ISO 8601 string for JavaScript Date parsing
+      // Using round() instead of toInt() for safer conversion
+      final dateString = DateTime.fromMillisecondsSinceEpoch(milliseconds.round()).toIso8601String();
+      DataroidJSBinding.setSuperAttribute(key, dateString.toJS);
+      return true;
+    } catch (e) {
+      print('Error setting date super attribute: $e');
+      return false;
+    }
+  }
+
   @override
   Future<bool> clearSuperAttribute(String key) async {
     DataroidJSBinding.clearSuperAttribute(key);
+    return true;
+  }
+
+  Future<bool> clearAllSuperAttributes() async {
+    DataroidJSBinding.clearAllSuperAttributes();
     return true;
   }
 

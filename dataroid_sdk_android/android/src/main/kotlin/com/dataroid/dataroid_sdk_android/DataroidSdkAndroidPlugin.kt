@@ -1328,13 +1328,14 @@ class DataroidSdkAndroidPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       return messageList
     }
 
-    if (inboxQuery == null) {
+    val query = inboxQuery
+    if (query == null) {
       dataroid.inboxClient.getMessages {
         dataroid.logExternal(3, "Flutter", "handleFetchInboxMessages: completed with ${it.size} messages")
         result.success(JSONArray(onGetCallback(it)).toString())
       }
     } else {
-      dataroid.inboxClient.getMessages(inboxQuery) {
+      dataroid.inboxClient.getMessages(query) {
         dataroid.logExternal(3, "Flutter", "handleFetchInboxMessages: completed with ${it.size} messages")
         result.success(JSONArray(onGetCallback(it)).toString())
       }

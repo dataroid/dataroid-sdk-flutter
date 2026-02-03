@@ -11,6 +11,7 @@ class DataroidJSBinding {
   external static void clearUserProfile();
   external static void setSuperAttribute(String key, JSAny value);
   external static void clearSuperAttribute(String key);
+  external static void clearAllSuperAttributes();
 }
 
 @JS('dataroid.apm')

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'dataroid_sdk_ios'
-  s.version          = '1.0.0'
+  s.version          = '4.0.1'
   s.summary          = 'iOS implementation of Dataroid SDK'
   s.description      = <<-DESC
 iOS platform implementation of the Dataroid Flutter SDK.
@@ -15,7 +15,7 @@ iOS platform implementation of the Dataroid Flutter SDK.
   s.source           = { :path => '.' }
   s.source_files     = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'DataroidCore', '~> 4.1.0'
+  s.dependency 'DataroidCore', '~> 4.2.0'
   s.platform = :ios, '15.0'
 
   # Flutter.framework does not contain a i386 slice.

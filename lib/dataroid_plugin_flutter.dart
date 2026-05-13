@@ -95,6 +95,12 @@ export 'package:dataroid_plugin_flutter/component_interaction/dataroid_radio_but
 // Push Notification
 export 'package:dataroid_plugin_flutter/push/push_action_type.dart';
 
+// Auto-Capture
+export 'package:dataroid_plugin_flutter/autocapture/dataroid_auto_capture.dart';
+export 'package:dataroid_plugin_flutter/autocapture/navigator_observer.dart';
+export 'package:dataroid_plugin_flutter/autocapture/network_tracking.dart';
+export 'package:dataroid_plugin_flutter/autocapture/dio_interceptor.dart';
+
 /// The delegate interface for Dataroid SDK events
 ///
 /// Create a class and initialize [DatroidPluginFlutter] instance with that.
@@ -105,7 +111,8 @@ abstract class DataroidPluginFlutterDelegate {
 
   void handleInAppButtonTap(InAppButton button, String content);
 
-  void handlePushEvent(PushActionType actionType, Map<String, dynamic> attributes);
+  void handlePushEvent(
+      PushActionType actionType, Map<String, dynamic> attributes);
 
   bool shouldShowNotificationInForeground(Map<String, dynamic> userInfo);
 
@@ -114,13 +121,15 @@ abstract class DataroidPluginFlutterDelegate {
 
 class DataroidPluginFlutter {
   MethodChannel channel = const MethodChannel('dataroid_plugin_flutter');
-  static const MethodChannel _snapshotChannel = MethodChannel('com.dataroid/snapshot');
+  static const MethodChannel _snapshotChannel =
+      MethodChannel('com.dataroid/snapshot');
   DataroidSdkPlatform get sdkChannel => DataroidSdkPlatform.instance;
 
   DataroidPluginFlutterDelegate? delegate;
   ContextTriggerListener? _contextTriggerListener;
 
-  static final DataroidPluginFlutter _shared = DataroidPluginFlutter._internal();
+  static final DataroidPluginFlutter _shared =
+      DataroidPluginFlutter._internal();
 
   factory DataroidPluginFlutter() {
     return _shared;
@@ -133,8 +142,9 @@ class DataroidPluginFlutter {
 
   /// Collects custom event
   Future<void> collectCustomEvent(CustomEvent event) async {
-    DataroidInternalLogger.debug('collectCustomEvent: called with event=$event');
-    if(kIsWeb) {
+    DataroidInternalLogger.debug(
+        'collectCustomEvent: called with event=$event');
+    if (kIsWeb) {
       await sdkChannel.collectEvent(event.eventName, event.attributes);
     } else {
       await sdkChannel.collectEvent(event.eventName, event.toJSON);
@@ -157,86 +167,105 @@ class DataroidPluginFlutter {
 
   /// Collects HTTP Record event.
   Future<void> collectAPMHTTPRecord(APMHTTPRecord record) async {
-    DataroidInternalLogger.debug('collectAPMHTTPRecord: called with record=$record');
+    DataroidInternalLogger.debug(
+        'collectAPMHTTPRecord: called with record=$record');
     await sdkChannel.httpCall(record);
   }
 
   /// Collects Network Error event.
   Future<void> collectAPMNetworkErrorRecord(APMNetworkRecord record) async {
-    DataroidInternalLogger.debug('collectAPMNetworkErrorRecord: called with record=$record');
+    DataroidInternalLogger.debug(
+        'collectAPMNetworkErrorRecord: called with record=$record');
     await sdkChannel.networkError(record);
   }
 
   /// Collects add to cart event with given [product].
   Future<void> addToCart(AddToCartAttributes addToCartAttributes) async {
-    DataroidInternalLogger.debug('addToCart: called with addToCartAttributes=$addToCartAttributes');
+    DataroidInternalLogger.debug(
+        'addToCart: called with addToCartAttributes=$addToCartAttributes');
     await sdkChannel.addToCart(addToCartAttributes);
   }
 
   /// Collects add to wish list with given [product].
-  Future<void> addToWishList(AddToWishlistAttributes addToWishlistAttributes) async {
-    DataroidInternalLogger.debug('addToWishList: called with addToWishlistAttributes=$addToWishlistAttributes');
+  Future<void> addToWishList(
+      AddToWishlistAttributes addToWishlistAttributes) async {
+    DataroidInternalLogger.debug(
+        'addToWishList: called with addToWishlistAttributes=$addToWishlistAttributes');
     await sdkChannel.addToWishList(addToWishlistAttributes);
   }
 
   /// Collects clear cart event with given attributes.
   Future<void> clearCart(ClearCartAttributes clearCartAttributes) async {
-    DataroidInternalLogger.debug('clearCart: called with clearCartAttributes=$clearCartAttributes');
+    DataroidInternalLogger.debug(
+        'clearCart: called with clearCartAttributes=$clearCartAttributes');
     await sdkChannel.clearCart(clearCartAttributes);
   }
 
   /// Collects purchase event with given [products].
   Future<void> purchase(PurchaseAttributes purchaseAttributes) async {
-    DataroidInternalLogger.debug('purchase: called with purchaseAttributes=$purchaseAttributes');
+    DataroidInternalLogger.debug(
+        'purchase: called with purchaseAttributes=$purchaseAttributes');
     await sdkChannel.purchase(purchaseAttributes);
   }
 
   /// Collects remove to cart event with given [product].
-  Future<void> removeFromCart(RemoveFromCartAttributes removeFromCartAttributes) async {
-    DataroidInternalLogger.debug('removeFromCart: called with removeFromCartAttributes=$removeFromCartAttributes');
+  Future<void> removeFromCart(
+      RemoveFromCartAttributes removeFromCartAttributes) async {
+    DataroidInternalLogger.debug(
+        'removeFromCart: called with removeFromCartAttributes=$removeFromCartAttributes');
     await sdkChannel.removeFromCart(removeFromCartAttributes);
   }
 
   /// Collects remove from wish list event with given [product].
-  Future<void> removeFromWishList(RemoveFromWishlistAttributes removeFromWishlistAttributes) async {
-    DataroidInternalLogger.debug('removeFromWishList: called with removeFromWishlistAttributes=$removeFromWishlistAttributes');
+  Future<void> removeFromWishList(
+      RemoveFromWishlistAttributes removeFromWishlistAttributes) async {
+    DataroidInternalLogger.debug(
+        'removeFromWishList: called with removeFromWishlistAttributes=$removeFromWishlistAttributes');
     await sdkChannel.removeFromWishList(removeFromWishlistAttributes);
   }
 
   /// Collects search event with given [query].
   Future<void> search(SearchAttributes searchAttributes) async {
-    DataroidInternalLogger.debug('search: called with searchAttributes=$searchAttributes');
+    DataroidInternalLogger.debug(
+        'search: called with searchAttributes=$searchAttributes');
     await sdkChannel.search(searchAttributes);
   }
 
   /// Collects start to checkout event.
-  Future<void> startCheckout(StartCheckoutAttributes startCheckoutAttributes) async {
-    DataroidInternalLogger.debug('startCheckout: called with startCheckoutAttributes=$startCheckoutAttributes');
+  Future<void> startCheckout(
+      StartCheckoutAttributes startCheckoutAttributes) async {
+    DataroidInternalLogger.debug(
+        'startCheckout: called with startCheckoutAttributes=$startCheckoutAttributes');
     await sdkChannel.startCheckout(startCheckoutAttributes);
   }
 
   /// Collects view [category] event.
   Future<void> viewCategory(ViewCategoryAttributes categoryAttributes) async {
-    DataroidInternalLogger.debug('viewCategory: called with categoryAttributes=$categoryAttributes');
+    DataroidInternalLogger.debug(
+        'viewCategory: called with categoryAttributes=$categoryAttributes');
     await sdkChannel.viewCategory(categoryAttributes);
   }
 
   /// Collects view [product] event.
   Future<void> viewProduct(ViewProductAttributes productAttributes) async {
-    DataroidInternalLogger.debug('viewProduct: called with productAttributes=$productAttributes');
+    DataroidInternalLogger.debug(
+        'viewProduct: called with productAttributes=$productAttributes');
     await sdkChannel.viewProduct(productAttributes);
   }
 
   /// Triggers Dataroid's FCM MessageReceived class. Android only.
   Future<bool> pushMessageReceived(Map<String, String> data) async {
     DataroidInternalLogger.debug('pushMessageReceived: called with data=$data');
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       try {
-        var result = await channel.invokeMethod(MethodName.pushMessageReceived, data);
-        DataroidInternalLogger.debug('pushMessageReceived: completed with result=$result');
+        var result =
+            await channel.invokeMethod(MethodName.pushMessageReceived, data);
+        DataroidInternalLogger.debug(
+            'pushMessageReceived: completed with result=$result');
         return result;
       } catch (e) {
-        DataroidInternalLogger.error('pushMessageReceived: failed with error: $e');
+        DataroidInternalLogger.error(
+            'pushMessageReceived: failed with error: $e');
         return false;
       }
     }
@@ -244,14 +273,14 @@ class DataroidPluginFlutter {
     return false;
   }
 
-
   /// Updates the current language.
   ///
   /// [languageCode] is the language code to set for the SDK.
   Future<void> updateLanguage({
     required String languageCode,
   }) async {
-    DataroidInternalLogger.debug('updateLanguage: called with languageCode=$languageCode');
+    DataroidInternalLogger.debug(
+        'updateLanguage: called with languageCode=$languageCode');
     await sdkChannel.updateLanguage(languageCode);
   }
 
@@ -271,8 +300,10 @@ class DataroidPluginFlutter {
   ///
   /// Host app must call this when the application routes to a deeplink.
   Future<void> collectDeeplink(DeeplinkAttributes deeplinkAttributes) async {
-    DataroidInternalLogger.debug('collectDeeplink: called with deeplinkAttributes=$deeplinkAttributes');
-    await channel.invokeMethod(MethodName.collectDeeplink, deeplinkAttributes.toJSON);
+    DataroidInternalLogger.debug(
+        'collectDeeplink: called with deeplinkAttributes=$deeplinkAttributes');
+    await channel.invokeMethod(
+        MethodName.collectDeeplink, deeplinkAttributes.toJSON);
   }
 
   /// Starts tracking the page with given [name] and [label].
@@ -314,12 +345,14 @@ class DataroidPluginFlutter {
           try {
             return InboxMessage(e as Map<dynamic, dynamic>);
           } catch (error) {
-            DataroidInternalLogger.error('fetchMessages: error creating InboxMessage: $error');
+            DataroidInternalLogger.error(
+                'fetchMessages: error creating InboxMessage: $error');
             return null;
           }
         }).where((message) => message != null),
       );
-      DataroidInternalLogger.debug('fetchMessages: completed with ${result.length} messages');
+      DataroidInternalLogger.debug(
+          'fetchMessages: completed with ${result.length} messages');
       return result;
     } else if (Platform.isAndroid) {
       final messagesString = await channel.invokeMethod(
@@ -328,11 +361,15 @@ class DataroidPluginFlutter {
       );
       try {
         final List<dynamic> messageList = json.decode(messagesString);
-        final result = messageList.map((e) => InboxMessage(e as Map<dynamic, dynamic>)).toList();
-        DataroidInternalLogger.debug('fetchMessages: completed with ${result.length} messages');
+        final result = messageList
+            .map((e) => InboxMessage(e as Map<dynamic, dynamic>))
+            .toList();
+        DataroidInternalLogger.debug(
+            'fetchMessages: completed with ${result.length} messages');
         return result;
       } catch (e) {
-        DataroidInternalLogger.error('fetchMessages: error decoding inbox messages: $e');
+        DataroidInternalLogger.error(
+            'fetchMessages: error decoding inbox messages: $e');
         return [];
       }
     } else {
@@ -346,17 +383,20 @@ class DataroidPluginFlutter {
 
   /// Deletes inbox messages associated with given IDs.
   Future<bool> deleteMessages(List<String> messageIDs) async {
-    DataroidInternalLogger.debug('deleteMessages: called with ${messageIDs.length} message IDs');
+    DataroidInternalLogger.debug(
+        'deleteMessages: called with ${messageIDs.length} message IDs');
     final result = await channel.invokeMethod(MethodName.deleteMessages, {
       ArgumentName.messageIDList: messageIDs,
     });
-    DataroidInternalLogger.debug('deleteMessages: completed with result=$result');
+    DataroidInternalLogger.debug(
+        'deleteMessages: completed with result=$result');
     return result;
   }
 
   /// Marks inbox messages associated with given IDs as read.
   Future<bool> readMessages(List<String> messageIDs) async {
-    DataroidInternalLogger.debug('readMessages: called with ${messageIDs.length} message IDs');
+    DataroidInternalLogger.debug(
+        'readMessages: called with ${messageIDs.length} message IDs');
     final result = await channel.invokeMethod(MethodName.readMessages, {
       ArgumentName.messageIDList: messageIDs,
     });
@@ -368,9 +408,11 @@ class DataroidPluginFlutter {
   Future<void> setSuperAttribute(
     SuperAttribute superAttribute,
   ) async {
-    DataroidInternalLogger.debug('setSuperAttribute: called with superAttribute=$superAttribute');
+    DataroidInternalLogger.debug(
+        'setSuperAttribute: called with superAttribute=$superAttribute');
     if (kIsWeb) {
-      await sdkChannel.setSuperAttribute(superAttribute.key, superAttribute.value);
+      await sdkChannel.setSuperAttribute(
+          superAttribute.key, superAttribute.value);
     } else {
       await channel.invokeMethod(
         MethodName.setSuperAttribute,
@@ -392,7 +434,8 @@ class DataroidPluginFlutter {
     DataroidInternalLogger.debug('getAllSuperAttributes: called');
     final result = await channel.invokeMethod(MethodName.getAllSuperAttributes);
     final attributes = Map<String, dynamic>.from(result ?? {});
-    DataroidInternalLogger.debug('getAllSuperAttributes: completed with ${attributes.length} attributes');
+    DataroidInternalLogger.debug(
+        'getAllSuperAttributes: completed with ${attributes.length} attributes');
     return attributes;
   }
 
@@ -403,26 +446,34 @@ class DataroidPluginFlutter {
   }
 
   /// Collects the [buttonClickEvent].
-  Future<void> collectButtonClick(ButtonClickAttributes buttonClickAttributes) async {
-    DataroidInternalLogger.debug('collectButtonClick: called with buttonClickAttributes=$buttonClickAttributes');
+  Future<void> collectButtonClick(
+      ButtonClickAttributes buttonClickAttributes) async {
+    DataroidInternalLogger.debug(
+        'collectButtonClick: called with buttonClickAttributes=$buttonClickAttributes');
     await sdkChannel.collectButtonClick(buttonClickAttributes);
   }
 
   /// Collects the [textChangeEvent].
-  Future<void> collectTextChange(TextChangeAttributes textChangeAttributes) async {
-    DataroidInternalLogger.debug('collectTextChange: called with textChangeAttributes=$textChangeAttributes');
+  Future<void> collectTextChange(
+      TextChangeAttributes textChangeAttributes) async {
+    DataroidInternalLogger.debug(
+        'collectTextChange: called with textChangeAttributes=$textChangeAttributes');
     await sdkChannel.collectTextChange(textChangeAttributes);
   }
 
   /// Collects the [toggleChangeEvent].
-  Future<void> collectToggleChange(ToggleChangeAttributes toggleChangeAttributes) async {
-    DataroidInternalLogger.debug('collectToggleChange: called with toggleChangeAttributes=$toggleChangeAttributes');
+  Future<void> collectToggleChange(
+      ToggleChangeAttributes toggleChangeAttributes) async {
+    DataroidInternalLogger.debug(
+        'collectToggleChange: called with toggleChangeAttributes=$toggleChangeAttributes');
     await sdkChannel.collectToggleChange(toggleChangeAttributes);
   }
 
   /// Collects the [radioButtonSelectEvent].
-  Future<void> collectRadioButtonSelect(RadioButtonSelectAttributes radioButtonSelectAttributes) async {
-    DataroidInternalLogger.debug('collectRadioButtonSelect: called with radioButtonSelectAttributes=$radioButtonSelectAttributes');
+  Future<void> collectRadioButtonSelect(
+      RadioButtonSelectAttributes radioButtonSelectAttributes) async {
+    DataroidInternalLogger.debug(
+        'collectRadioButtonSelect: called with radioButtonSelectAttributes=$radioButtonSelectAttributes');
     await sdkChannel.collectRadioButtonSelect(radioButtonSelectAttributes);
   }
 
@@ -432,63 +483,60 @@ class DataroidPluginFlutter {
   /// Note: Screen interaction is only supported on iOS and Android platforms.
   Future<void> collectTouch(TouchAttributes touchAttributes) async {
     if (kIsWeb) {
-      DataroidInternalLogger.warning('collectTouch: skipped (not supported on web)');
+      DataroidInternalLogger.warning(
+          'collectTouch: skipped (not supported on web)');
       return;
     }
-    DataroidInternalLogger.debug('collectTouch: called with touchAttributes=$touchAttributes');
-    await channel.invokeMethod(
-      MethodName.collectTouchEvent,
-      touchAttributes.toJSON,
-    );
+    DataroidInternalLogger.debug(
+        'collectTouch: called with touchAttributes=$touchAttributes');
+    await sdkChannel.collectTouch(touchAttributes);
   }
 
   /// Collects double tap event with given [doubleTapAttributes].
   /// Note: Screen interaction is only supported on iOS and Android platforms.
   Future<void> collectDoubleTap(DoubleTapAttributes doubleTapAttributes) async {
     if (kIsWeb) {
-      DataroidInternalLogger.warning('collectDoubleTap: skipped (not supported on web)');
+      DataroidInternalLogger.warning(
+          'collectDoubleTap: skipped (not supported on web)');
       return;
     }
-    DataroidInternalLogger.debug('collectDoubleTap: called with doubleTapAttributes=$doubleTapAttributes');
-    await channel.invokeMethod(
-      MethodName.collectDoubleTapEvent,
-      doubleTapAttributes.toJSON,
-    );
+    DataroidInternalLogger.debug(
+        'collectDoubleTap: called with doubleTapAttributes=$doubleTapAttributes');
+    await sdkChannel.collectDoubleTap(doubleTapAttributes);
   }
 
   /// Collects long press event with given [longPressAttributes].
   /// Note: Screen interaction is only supported on iOS and Android platforms.
   Future<void> collectLongPress(LongPressAttributes longPressAttributes) async {
     if (kIsWeb) {
-      DataroidInternalLogger.warning('collectLongPress: skipped (not supported on web)');
+      DataroidInternalLogger.warning(
+          'collectLongPress: skipped (not supported on web)');
       return;
     }
-    DataroidInternalLogger.debug('collectLongPress: called with longPressAttributes=$longPressAttributes');
-    await channel.invokeMethod(
-      MethodName.collectLongPressEvent,
-      longPressAttributes.toJSON,
-    );
+    DataroidInternalLogger.debug(
+        'collectLongPress: called with longPressAttributes=$longPressAttributes');
+    await sdkChannel.collectLongPress(longPressAttributes);
   }
 
   /// Collects swipe event with given [swipeAttributes].
   /// Note: Screen interaction is only supported on iOS and Android platforms.
   Future<void> collectSwipe(SwipeAttributes swipeAttributes) async {
     if (kIsWeb) {
-      DataroidInternalLogger.warning('collectSwipe: skipped (not supported on web)');
+      DataroidInternalLogger.warning(
+          'collectSwipe: skipped (not supported on web)');
       return;
     }
-    DataroidInternalLogger.debug('collectSwipe: called with swipeAttributes=$swipeAttributes');
-    await channel.invokeMethod(
-      MethodName.collectSwipeEvent,
-      swipeAttributes.toJSON,
-    );
+    DataroidInternalLogger.debug(
+        'collectSwipe: called with swipeAttributes=$swipeAttributes');
+    await sdkChannel.collectSwipe(swipeAttributes);
   }
 
   /// Updates the session configuration
   ///
   /// [sessionDropDuration] The duration in seconds after which a session should be dropped
   Future<void> updateSessionConfig(double sessionDropDuration) async {
-    DataroidInternalLogger.debug('updateSessionConfig: called with sessionDropDuration=$sessionDropDuration');
+    DataroidInternalLogger.debug(
+        'updateSessionConfig: called with sessionDropDuration=$sessionDropDuration');
     await sdkChannel.updateSessionConfig(sessionDropDuration);
   }
 
@@ -496,7 +544,8 @@ class DataroidPluginFlutter {
   ///
   /// [inAppMessagingEnabled] Whether in-app messaging is enabled
   Future<void> updateInAppConfig(bool inAppMessagingEnabled) async {
-    DataroidInternalLogger.debug('updateInAppConfig: called with inAppMessagingEnabled=$inAppMessagingEnabled');
+    DataroidInternalLogger.debug(
+        'updateInAppConfig: called with inAppMessagingEnabled=$inAppMessagingEnabled');
     await sdkChannel.updateInAppConfig(inAppMessagingEnabled);
   }
 
@@ -505,16 +554,24 @@ class DataroidPluginFlutter {
   /// [recordCollectionEnabled] Whether APM record collection is enabled
   /// [apmAutoCaptureEnabled] Whether APM auto-capture is enabled
   /// [recordStorageLimit] Storage limit for APM records
-  Future<void> updateApmConfig({bool? recordCollectionEnabled, bool? apmAutoCaptureEnabled, int? recordStorageLimit}) async {
-    DataroidInternalLogger.debug('updateApmConfig: called with recordCollectionEnabled=$recordCollectionEnabled, apmAutoCaptureEnabled=$apmAutoCaptureEnabled, recordStorageLimit=$recordStorageLimit');
-    await sdkChannel.updateApmConfig(recordCollectionEnabled: recordCollectionEnabled, apmAutoCaptureEnabled: apmAutoCaptureEnabled, recordStorageLimit: recordStorageLimit);
+  Future<void> updateApmConfig(
+      {bool? recordCollectionEnabled,
+      bool? apmAutoCaptureEnabled,
+      int? recordStorageLimit}) async {
+    DataroidInternalLogger.debug(
+        'updateApmConfig: called with recordCollectionEnabled=$recordCollectionEnabled, apmAutoCaptureEnabled=$apmAutoCaptureEnabled, recordStorageLimit=$recordStorageLimit');
+    await sdkChannel.updateApmConfig(
+        recordCollectionEnabled: recordCollectionEnabled,
+        apmAutoCaptureEnabled: apmAutoCaptureEnabled,
+        recordStorageLimit: recordStorageLimit);
   }
 
   /// Updates the screen tracking configuration
   ///
   /// [enabled] Whether screen tracking is enabled
   Future<void> updateScreenTrackingConfig(bool enabled) async {
-    DataroidInternalLogger.debug('updateScreenTrackingConfig: called with enabled=$enabled');
+    DataroidInternalLogger.debug(
+        'updateScreenTrackingConfig: called with enabled=$enabled');
     await sdkChannel.updateScreenTrackingConfig(enabled);
   }
 
@@ -522,7 +579,8 @@ class DataroidPluginFlutter {
   ///
   /// [enabled] Whether event collection should be enabled
   Future<void> setEventCollectionEnabled(bool enabled) async {
-    DataroidInternalLogger.debug('setEventCollectionEnabled: called with enabled=$enabled');
+    DataroidInternalLogger.debug(
+        'setEventCollectionEnabled: called with enabled=$enabled');
     await sdkChannel.setEventCollectionEnabled(enabled);
   }
 
@@ -530,13 +588,16 @@ class DataroidPluginFlutter {
   ///
   /// [limit] The maximum number of events to store
   Future<void> setEventStorageLimit(int limit) async {
-    DataroidInternalLogger.debug('setEventStorageLimit: called with limit=$limit');
+    DataroidInternalLogger.debug(
+        'setEventStorageLimit: called with limit=$limit');
     await sdkChannel.setEventStorageLimit(limit);
   }
 
   /// Registers a listener for Context Trigger events
-  Future<void> setContextTriggerListener(ContextTriggerListener listener) async {
-    DataroidInternalLogger.debug('setContextTriggerListener: called with listener=$listener');
+  Future<void> setContextTriggerListener(
+      ContextTriggerListener listener) async {
+    DataroidInternalLogger.debug(
+        'setContextTriggerListener: called with listener=$listener');
     _contextTriggerListener = listener;
     await sdkChannel.setContextTriggerListener(listener);
   }
@@ -549,40 +610,49 @@ class DataroidPluginFlutter {
   }
 
   /// Track when user opens a notification created from background push
-  /// 
+  ///
   /// [backgroundPushData] The background push data containing notification details
-  Future<void> collectNotificationOpenEvent(BackgroundPushData backgroundPushData) async {
-    DataroidInternalLogger.debug('collectNotificationOpenEvent: called with backgroundPushData=$backgroundPushData');
+  Future<void> collectNotificationOpenEvent(
+      BackgroundPushData backgroundPushData) async {
+    DataroidInternalLogger.debug(
+        'collectNotificationOpenEvent: called with backgroundPushData=$backgroundPushData');
     if (Platform.isAndroid) {
       await channel.invokeMethod(
         MethodName.collectNotificationOpenEvent,
         {ArgumentName.backgroundPushData: backgroundPushData.toMap()},
       );
     } else {
-      DataroidInternalLogger.error('collectNotificationOpenEvent: unsupported platform');
-      throw UnsupportedError('collectNotificationOpenEvent is only supported on Android platform');
+      DataroidInternalLogger.error(
+          'collectNotificationOpenEvent: unsupported platform');
+      throw UnsupportedError(
+          'collectNotificationOpenEvent is only supported on Android platform');
     }
   }
 
   /// Track when user dismisses a notification created from background push
-  /// 
+  ///
   /// [backgroundPushData] The background push data containing notification details
-  Future<void> collectNotificationDismissedEvent(BackgroundPushData backgroundPushData) async {
-    DataroidInternalLogger.debug('collectNotificationDismissedEvent: called with backgroundPushData=$backgroundPushData');
+  Future<void> collectNotificationDismissedEvent(
+      BackgroundPushData backgroundPushData) async {
+    DataroidInternalLogger.debug(
+        'collectNotificationDismissedEvent: called with backgroundPushData=$backgroundPushData');
     if (Platform.isAndroid) {
       await channel.invokeMethod(
         MethodName.collectNotificationDismissedEvent,
         {ArgumentName.backgroundPushData: backgroundPushData.toMap()},
       );
     } else {
-      DataroidInternalLogger.error('collectNotificationDismissedEvent: unsupported platform');
-      throw UnsupportedError('collectNotificationDismissedEvent is only supported on Android platform');
+      DataroidInternalLogger.error(
+          'collectNotificationDismissedEvent: unsupported platform');
+      throw UnsupportedError(
+          'collectNotificationDismissedEvent is only supported on Android platform');
     }
   }
 
   Future<dynamic> _nativeMethodHandler(MethodCall methodCall) async {
     if (delegate == null) {
-      print('[DATAROID/FLUTTER] Received native callback, but the delegate is null!');
+      print(
+          '[DATAROID/FLUTTER] Received native callback, but the delegate is null!');
       return false;
     }
     final args = methodCall.arguments;
@@ -604,7 +674,7 @@ class DataroidPluginFlutter {
         final actionTypeString = args[ArgumentName.actionType] as String;
         final attributesMap = args[ArgumentName.attributes] as Map;
         final attributes = Map<String, dynamic>.from(attributesMap);
-        
+
         // Convert String to PushActionType enum
         PushActionType actionType;
         switch (actionTypeString.toUpperCase()) {
@@ -625,15 +695,17 @@ class DataroidPluginFlutter {
             actionType = PushActionType.custom;
             break;
           default:
-            print('[DATAROID/FLUTTER] Unknown action type: $actionTypeString, defaulting to nothing');
+            print(
+                '[DATAROID/FLUTTER] Unknown action type: $actionTypeString, defaulting to nothing');
             actionType = PushActionType.nothing;
         }
-        
+
         delegate?.handlePushEvent(actionType, attributes);
         return true;
       case MethodName.handlePushEventiOS:
         {
-          final actionType = PushActionType.values[args[ArgumentName.pushActionType] as int];
+          final actionType =
+              PushActionType.values[args[ArgumentName.pushActionType] as int];
           final targetURL = (args[ArgumentName.pushTargetURL] as String?) ?? "";
           final attributes = args[ArgumentName.pushAttrs] as Map;
 
@@ -655,7 +727,8 @@ class DataroidPluginFlutter {
 
         final result = ContextTriggerResult(
           contextTriggerId: contextTriggerId,
-          attributes: attributes != null ? Map<String, dynamic>.from(attributes) : null,
+          attributes:
+              attributes != null ? Map<String, dynamic>.from(attributes) : null,
         );
 
         // Notify the registered listener if available
@@ -663,8 +736,10 @@ class DataroidPluginFlutter {
         break;
       case MethodName.handleBackgroundPush:
         final parameters = args[ArgumentName.parameters] as Map?;
-        final backgroundPushParameters = parameters != null ? Map<String, dynamic>.from(parameters) : <String, dynamic>{};
-        
+        final backgroundPushParameters = parameters != null
+            ? Map<String, dynamic>.from(parameters)
+            : <String, dynamic>{};
+
         // Handle background push notification
         delegate?.handleBackgroundPushAndroid(backgroundPushParameters);
         break;
@@ -672,7 +747,6 @@ class DataroidPluginFlutter {
         throw MissingPluginException('notImplemented');
     }
   }
-
 
   static Future<dynamic> _handleSnapshotMethodCall(MethodCall call) async {
     if (call.method == 'takeScreenshot') {
@@ -683,14 +757,15 @@ class DataroidPluginFlutter {
 
         // Method 1: Try to find the active/focused context
         BuildContext? activeContext;
-        
+
         // First try to get the currently focused context
-        final focusedContext = WidgetsBinding.instance.focusManager.primaryFocus?.context;
+        final focusedContext =
+            WidgetsBinding.instance.focusManager.primaryFocus?.context;
         if (focusedContext != null) {
           activeContext = focusedContext;
           print('🟡 [SNAPSHOT] Using focused context');
         }
-        
+
         // If no focused context, try to find the navigator's overlay context
         if (activeContext == null) {
           final rootContext = WidgetsBinding.instance.rootElement;
@@ -722,22 +797,23 @@ class DataroidPluginFlutter {
             // First try to find RepaintBoundary by walking down the tree
             void findBoundaryRecursive(RenderObject current) {
               if (boundary != null) return;
-              
+
               if (current is RenderRepaintBoundary) {
                 // Check if this boundary has a reasonable size (not just a small widget)
                 final size = current.size;
                 if (size.width > 100 && size.height > 100) {
                   boundary = current;
-                  print('🟡 [SNAPSHOT] Found RepaintBoundary: ${size.width}x${size.height}');
+                  print(
+                      '🟡 [SNAPSHOT] Found RepaintBoundary: ${size.width}x${size.height}');
                   return;
                 }
               }
-              
+
               current.visitChildren(findBoundaryRecursive);
             }
-            
+
             findBoundaryRecursive(renderObject);
-            
+
             // If no suitable boundary found by going down, try going up
             if (boundary == null) {
               RenderObject? current = renderObject;
@@ -746,7 +822,8 @@ class DataroidPluginFlutter {
                   final size = current.size;
                   if (size.width > 100 && size.height > 100) {
                     boundary = current;
-                    print('🟡 [SNAPSHOT] Found RepaintBoundary (upward): ${size.width}x${size.height}');
+                    print(
+                        '🟡 [SNAPSHOT] Found RepaintBoundary (upward): ${size.width}x${size.height}');
                     break;
                   }
                 }
@@ -770,7 +847,9 @@ class DataroidPluginFlutter {
               if (renderObject is RenderRepaintBoundary) {
                 final size = renderObject.size;
                 final area = size.width * size.height;
-                if (area > largestArea && size.width > 100 && size.height > 100) {
+                if (area > largestArea &&
+                    size.width > 100 &&
+                    size.height > 100) {
                   largestArea = area;
                   largestBoundary = renderObject;
                 }
@@ -780,9 +859,10 @@ class DataroidPluginFlutter {
 
             findLargestBoundaryRecursive(renderView);
             boundary = largestBoundary;
-            
+
             if (boundary != null) {
-              print('🟡 [SNAPSHOT] Using largest RepaintBoundary: ${boundary!.size.width}x${boundary!.size.height}');
+              print(
+                  '🟡 [SNAPSHOT] Using largest RepaintBoundary: ${boundary!.size.width}x${boundary!.size.height}');
             }
           } catch (e) {
             // Fallback: try with new renderViews API
@@ -795,7 +875,9 @@ class DataroidPluginFlutter {
                 if (renderObject is RenderRepaintBoundary) {
                   final size = renderObject.size;
                   final area = size.width * size.height;
-                  if (area > largestArea && size.width > 100 && size.height > 100) {
+                  if (area > largestArea &&
+                      size.width > 100 &&
+                      size.height > 100) {
                     largestArea = area;
                     largestBoundary = renderObject;
                   }
@@ -854,7 +936,7 @@ class DataroidPluginFlutter {
         try {
           final response = await _snapshotChannel
               .invokeMethod('onScreenshotTaken', {'filePath': file.path});
-          
+
           // Check if native side requested cleanup
           if (response is Map && response['cleanup'] == true) {
             print('🧹 [SNAPSHOT] Native requested cleanup, deleting temp file');
@@ -872,15 +954,17 @@ class DataroidPluginFlutter {
           // Clean up file if native communication failed
           try {
             await file.delete();
-            print('🧹 [SNAPSHOT] Cleaned up temp file after native communication failure');
+            print(
+                '🧹 [SNAPSHOT] Cleaned up temp file after native communication failure');
           } catch (deleteError) {
-            print('⚠️ [SNAPSHOT] Failed to delete temp file after error: $deleteError');
+            print(
+                '⚠️ [SNAPSHOT] Failed to delete temp file after error: $deleteError');
           }
         }
       } catch (e) {
         // On error, send null path to native
         print('🔴 [SNAPSHOT] Flutter snapshot error: $e');
-        
+
         // Clean up any partially created files
         try {
           final tempDir = await getTemporaryDirectory();
@@ -888,23 +972,27 @@ class DataroidPluginFlutter {
           final dir = Directory(tempDir.path);
           final files = await dir.list().toList();
           for (final file in files) {
-            if (file is File && file.path.contains('snapshots') && file.path.endsWith('.png')) {
+            if (file is File &&
+                file.path.contains('snapshots') &&
+                file.path.endsWith('.png')) {
               final stat = await file.stat();
-              final fileAge = DateTime.now().difference(stat.modified).inMinutes;
-              if (fileAge < 1) { // Delete files created within the last minute
+              final fileAge =
+                  DateTime.now().difference(stat.modified).inMinutes;
+              if (fileAge < 1) {
+                // Delete files created within the last minute
                 await file.delete();
-                print('🧹 [SNAPSHOT] Cleaned up recent snapshot file after error: ${file.path}');
+                print(
+                    '🧹 [SNAPSHOT] Cleaned up recent snapshot file after error: ${file.path}');
               }
             }
           }
         } catch (cleanupError) {
           print('⚠️ [SNAPSHOT] Error during cleanup: $cleanupError');
         }
-        
+
         await _snapshotChannel
             .invokeMethod('onScreenshotTaken', {'filePath': null});
       }
     }
   }
-
 }

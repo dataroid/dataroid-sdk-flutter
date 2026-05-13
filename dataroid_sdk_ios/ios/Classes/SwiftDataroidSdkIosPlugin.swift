@@ -1893,6 +1893,16 @@ extension SwiftDataroidSdkIosPlugin {
         }
 
         config.frameworkIdentifier = "FLUTTER"
+        // Flutter auto-capture (DataroidAutoCapture, DataroidNavigatorObserver,
+        // DataroidHttpOverrides) owns these event sources, so disable native
+        // auto-collection unconditionally to avoid double-firing. Mirrors the
+        // Android plugin and applies to screen-tracking too — previously only
+        // the explicit `updateScreenTrackingConfig` call switched it off, so
+        // integrators who never called it received duplicate screen events.
+        config.componentInteraction.autoCollectingEnabled = false
+        config.screenInteraction.autoCollectingEnabled = false
+        config.apm.autoCollectingEnabled = false
+        config.screenTracking.autoCollectingEnabled = false
 
         instance.dataroid = Dataroid.initialize(config: config)
 

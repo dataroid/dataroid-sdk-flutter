@@ -4,7 +4,7 @@ author: Dataroid SDK Team <sdk@dataroid.com>
 homepage: https://github.com/dataroid/sdk-flutter
 # NOTE: We strongly prefer non-breaking changes, even at the expense of a
 # less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
-version: 4.0.1
+version: 4.1.0
 
 dependencies:
   flutter:

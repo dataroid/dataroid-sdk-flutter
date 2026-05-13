@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'dataroid_sdk_ios'
-  s.version          = '4.0.1'
+  s.version          = '4.1.0'
   s.summary          = 'iOS implementation of Dataroid SDK'
   s.description      = <<-DESC
 iOS platform implementation of the Dataroid Flutter SDK.

@@ -70,6 +70,7 @@ import com.dataroid.sdk.notifications.NotificationCallbackResult
 import com.dataroid.sdk.util.BackgroundPushData
 import com.dataroid.sdk.analytics.screentracking.DataroidScreenTrackingConfig
 import com.dataroid.sdk.apm.DataroidAPMConfig
+import com.dataroid.sdk.autocollect.DataroidComponentInteractionConfig
 import com.dataroid.sdk.autocollect.DataroidScreenInteractionConfig
 import com.dataroid.sdk.core.event.UserAttributes
 import com.dataroid.sdk.network.DataroidJsonConverter
@@ -2225,28 +2226,34 @@ class DataroidSdkAndroidPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
         builder.withLogConfig(logConfig)
 
+        // Flutter owns automatic collection through DataroidAutoCapture,
+        // DataroidNavigatorObserver, and network interceptors. Disable native
+        // auto-collection to keep Android aligned with iOS and avoid duplicate
+        // screen, interaction, and APM events.
         val screenTrackingConfig = DataroidScreenTrackingConfig()
         isScreenTrackingEnabled?.let {
           screenTrackingConfig.setEnabled(it)
         }
+        screenTrackingConfig.isAutoCollectingEnabled = false
         builder.withScreenTrackingConfig(screenTrackingConfig)
         isInAppMessagingEnabled?.let {
           val inAppMessagingConfig = DataroidInAppMessagingConfig()
           inAppMessagingConfig.isEnabled = it
           builder.withInAppMessagingConfig(inAppMessagingConfig)
         }
-        isAPMEnabled?.let {
-          val apmConfig = DataroidAPMConfig().apply {
-            withEnabled(it)
-          }
-          builder.withAPMConfig(apmConfig)
+        val apmConfig = DataroidAPMConfig().apply {
+          isAPMEnabled?.let { withEnabled(it) }
+          withAutoCollectingEnabled(false)
         }
+        builder.withAPMConfig(apmConfig)
 
         val screenInteractionConfig = DataroidScreenInteractionConfig()
-        isAutoScreenInterActionEnabled?.let {
-          screenInteractionConfig.withAutoCollectingEnabled(it)
-        }
+        screenInteractionConfig.withAutoCollectingEnabled(false)
         builder.withScreenInteractionConfig(screenInteractionConfig)
+
+        val componentInteractionConfig = DataroidComponentInteractionConfig()
+            .withAutoCollectingEnabled(false)
+        builder.withComponentInteractionConfig(componentInteractionConfig)
 
         if (!pinningEndpoint.isNullOrEmpty() && !pinningKey.isNullOrEmpty()) {
           val networkConfig = DataroidNetworkConfig();

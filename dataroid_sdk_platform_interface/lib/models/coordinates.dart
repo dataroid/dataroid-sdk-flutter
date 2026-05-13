@@ -21,7 +21,11 @@ class Coordinates {
   final int right;
   final int bottom;
 
-  Coordinates({required this.left, required this.top, required this.right, required this.bottom});
+  Coordinates(
+      {required this.left,
+      required this.top,
+      required this.right,
+      required this.bottom});
 
   factory Coordinates.fromJson(Map<String, dynamic> json) {
     return Coordinates(
@@ -40,4 +44,8 @@ class Coordinates {
       ArgumentName.bottom: bottom,
     };
   }
-} 
+
+  @override
+  String toString() =>
+      'Coordinates(left: $left, top: $top, right: $right, bottom: $bottom)';
+}

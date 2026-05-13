@@ -45,11 +45,11 @@ class ButtonClickAttributes extends ComponentAttributes {
       accessibilityLabel: json[ArgumentName.accessibilityLabel],
       componentId: json[ArgumentName.componentId],
       className: json[ArgumentName.className] ?? '',
-      coordinates: json[ArgumentName.coordinates] != null 
-          ? Coordinates.fromJson(json[ArgumentName.coordinates]) 
+      coordinates: json[ArgumentName.coordinates] != null
+          ? Coordinates.fromJson(json[ArgumentName.coordinates])
           : null,
-      screenTracker: json[ArgumentName.screenTrackingAttributes] != null 
-          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes]) 
+      screenTracker: json[ArgumentName.screenTrackingAttributes] != null
+          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes])
           : null,
     );
   }
@@ -66,4 +66,16 @@ class ButtonClickAttributes extends ComponentAttributes {
         ArgumentName.coordinates: coordinates?.toJSON,
         ArgumentName.screenTrackingAttributes: screenTracker?.toJSON,
       };
-} 
+
+  @override
+  String toString() => 'ButtonClickAttributes(className: $className'
+      '${label != null ? ', label: $label' : ''}'
+      '${href != null ? ', href: $href' : ''}'
+      '${elementType != null ? ', elementType: $elementType' : ''}'
+      '${elementName != null ? ', elementName: $elementName' : ''}'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
+}

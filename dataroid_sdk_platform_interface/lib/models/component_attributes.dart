@@ -32,4 +32,12 @@ abstract class ComponentAttributes {
   });
 
   Map<String, dynamic> get toJSON;
-} 
+
+  @override
+  String toString() => '${runtimeType.toString()}(className: $className'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
+}

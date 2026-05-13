@@ -32,20 +32,24 @@ class ScreenTracker {
   });
 
   factory ScreenTracker.fromJson(Map<String, dynamic> json) {
-    final attributes = Map<String, dynamic>.from(json[ArgumentName.attributes] ?? {});
-    
+    final attributes =
+        Map<String, dynamic>.from(json[ArgumentName.attributes] ?? {});
+
     // Reconstruct DateTime attributes from milliseconds
-    final dateAttributes = json[ArgumentName.dateAttributes] as Map<String, dynamic>?;
+    final dateAttributes =
+        json[ArgumentName.dateAttributes] as Map<String, dynamic>?;
     if (dateAttributes != null) {
       dateAttributes.forEach((key, value) {
         if (value is int) {
-          attributes[key] = DateTime.fromMillisecondsSinceEpoch(value).toIso8601String();
+          attributes[key] =
+              DateTime.fromMillisecondsSinceEpoch(value).toIso8601String();
         }
       });
     }
-    
+
     // Reconstruct List<int> attributes
-    final intListAttributes = json[ArgumentName.intListAttributes] as Map<String, dynamic>?;
+    final intListAttributes =
+        json[ArgumentName.intListAttributes] as Map<String, dynamic>?;
     if (intListAttributes != null) {
       intListAttributes.forEach((key, value) {
         if (value is List) {
@@ -53,9 +57,10 @@ class ScreenTracker {
         }
       });
     }
-    
+
     // Reconstruct List<String> attributes
-    final stringListAttributes = json[ArgumentName.stringListAttributes] as Map<String, dynamic>?;
+    final stringListAttributes =
+        json[ArgumentName.stringListAttributes] as Map<String, dynamic>?;
     if (stringListAttributes != null) {
       stringListAttributes.forEach((key, value) {
         if (value is List) {
@@ -63,7 +68,7 @@ class ScreenTracker {
         }
       });
     }
-    
+
     return ScreenTracker(
       label: json[ArgumentName.label] ?? '',
       viewClass: json[ArgumentName.viewClass] ?? '',
@@ -73,11 +78,11 @@ class ScreenTracker {
   }
 
   Map<String, dynamic> get toJSON {
-    _parseAttributes();
+    final parsedAttributes = _parseAttributes();
     return {
       ArgumentName.label: label,
       ArgumentName.viewClass: viewClass,
-      ArgumentName.attributes: attributes,
+      ArgumentName.attributes: parsedAttributes,
       ArgumentName.dateAttributes: _dateAttributes,
       ArgumentName.intListAttributes: _intListAttributes,
       ArgumentName.stringListAttributes: _stringListAttributes,
@@ -85,7 +90,12 @@ class ScreenTracker {
     };
   }
 
-  void _parseAttributes() {
+  Map<String, dynamic> _parseAttributes() {
+    _dateAttributes = {};
+    _intListAttributes = {};
+    _stringListAttributes = {};
+    final parsedAttributes = Map<String, dynamic>.from(attributes);
+
     attributes.entries.forEach((e) {
       if (e.value is DateTime) {
         final value = e.value as DateTime;
@@ -101,6 +111,35 @@ class ScreenTracker {
         _stringListAttributes?[e.key] = value;
       }
     });
-    attributes.removeWhere((key, value) => value is DateTime || value is List<int> || value is List<String>);
+    parsedAttributes.removeWhere((key, value) =>
+        value is DateTime || value is List<int> || value is List<String>);
+    return parsedAttributes;
+  }
+
+  @override
+  String toString() => 'ScreenTracker(label: $label, viewClass: $viewClass'
+      '${url != null ? ', url: ${_redactedUrl(url!)}' : ''}'
+      '${attributes.isNotEmpty ? ', attributeCount: ${attributes.length}' : ''})';
+
+  /// Returns a privacy-safe representation of [value] for logging.
+  ///
+  /// Drops query, fragment, and path entirely to avoid leaking session tokens,
+  /// reset tokens, identifiers, or other PII commonly carried in URLs.
+  static String _redactedUrl(String value) {
+    final uri = Uri.tryParse(value);
+    if (uri == null) {
+      return '[INVALID_URL]';
+    }
+    if (!uri.hasScheme || uri.host.isEmpty) {
+      return '[REDACTED]';
+    }
+    final scheme = uri.scheme.toLowerCase();
+    final isDefaultPort = (scheme == 'http' && uri.port == 80) ||
+        (scheme == 'https' && uri.port == 443);
+    return Uri(
+      scheme: scheme,
+      host: uri.host,
+      port: (uri.hasPort && !isDefaultPort) ? uri.port : null,
+    ).toString();
   }
 }

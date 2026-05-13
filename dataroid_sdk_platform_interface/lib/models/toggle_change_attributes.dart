@@ -20,7 +20,13 @@ import 'package:dataroid_sdk_platform_interface/constants.dart';
 
 class ToggleChangeAttributes extends ComponentAttributes {
   final String? label;
+
+  /// The toggle's value **after** the tap, i.e. the new state the user
+  /// produced by interacting with it. For `Switch` and `Checkbox` this is
+  /// the flipped value; for `Radio` (and the corresponding `*ListTile`
+  /// variants) it is always `true` because tapping always selects.
   final bool isChecked;
+
   final String? elementType;
   final String? elementName;
 
@@ -45,11 +51,11 @@ class ToggleChangeAttributes extends ComponentAttributes {
       accessibilityLabel: json[ArgumentName.accessibilityLabel],
       componentId: json[ArgumentName.componentId],
       className: json[ArgumentName.className] ?? '',
-      coordinates: json[ArgumentName.coordinates] != null 
-          ? Coordinates.fromJson(json[ArgumentName.coordinates]) 
+      coordinates: json[ArgumentName.coordinates] != null
+          ? Coordinates.fromJson(json[ArgumentName.coordinates])
           : null,
-      screenTracker: json[ArgumentName.screenTrackingAttributes] != null 
-          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes]) 
+      screenTracker: json[ArgumentName.screenTrackingAttributes] != null
+          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes])
           : null,
     );
   }
@@ -66,4 +72,16 @@ class ToggleChangeAttributes extends ComponentAttributes {
         ArgumentName.coordinates: coordinates?.toJSON,
         ArgumentName.screenTrackingAttributes: screenTracker?.toJSON,
       };
-} 
+
+  @override
+  String toString() =>
+      'ToggleChangeAttributes(className: $className, isChecked: $isChecked'
+      '${label != null ? ', label: $label' : ''}'
+      '${elementType != null ? ', elementType: $elementType' : ''}'
+      '${elementName != null ? ', elementName: $elementName' : ''}'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
+}

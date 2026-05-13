@@ -34,4 +34,7 @@ class TouchPoint {
       ArgumentName.y: y,
     };
   }
+
+  @override
+  String toString() => 'TouchPoint(x: $x, y: $y)';
 }

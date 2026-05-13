@@ -40,4 +40,13 @@ class LongPressAttributes extends ComponentAttributes {
       ArgumentName.screenTrackingAttributes: screenTracker?.toJSON,
     };
   }
+
+  @override
+  String toString() =>
+      'LongPressAttributes(touchPoint: $touchPoint, className: $className'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
 }

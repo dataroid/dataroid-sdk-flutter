@@ -1,16 +1,16 @@
 /*
- * 
+ *
  * text_change_attributes.dart
  * Dataroid-Plugin-Flutter
- * 
+ *
  * Created on 31/1/2024.
  * Copyright (c) 2020 Dataroid. All rights reserved.
- * 
+ *
  * Save to the extent permitted by law, you may not use, copy, modify,
  * distribute or create derivative works of this material or any part
  * of it without the prior written consent of Dataroid.
  * Any reproduction of this material must contain this notice.
- * 
+ *
  */
 
 import 'package:dataroid_sdk_platform_interface/models/component_attributes.dart';
@@ -45,11 +45,11 @@ class TextChangeAttributes extends ComponentAttributes {
       accessibilityLabel: json[ArgumentName.accessibilityLabel],
       componentId: json[ArgumentName.componentId],
       className: json[ArgumentName.className] ?? '',
-      coordinates: json[ArgumentName.coordinates] != null 
-          ? Coordinates.fromJson(json[ArgumentName.coordinates]) 
+      coordinates: json[ArgumentName.coordinates] != null
+          ? Coordinates.fromJson(json[ArgumentName.coordinates])
           : null,
-      screenTracker: json[ArgumentName.screenTrackingAttributes] != null 
-          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes]) 
+      screenTracker: json[ArgumentName.screenTrackingAttributes] != null
+          ? ScreenTracker.fromJson(json[ArgumentName.screenTrackingAttributes])
           : null,
     );
   }
@@ -66,4 +66,16 @@ class TextChangeAttributes extends ComponentAttributes {
         ArgumentName.coordinates: coordinates?.toJSON,
         ArgumentName.screenTrackingAttributes: screenTracker?.toJSON,
       };
-} 
+
+  @override
+  String toString() => 'TextChangeAttributes(className: $className'
+      ', textValue: [REDACTED]'
+      '${placeholder != null ? ', placeholder: [REDACTED]' : ''}'
+      '${elementType != null ? ', elementType: $elementType' : ''}'
+      '${elementName != null ? ', elementName: $elementName' : ''}'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
+}

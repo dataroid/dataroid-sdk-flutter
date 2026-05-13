@@ -40,4 +40,13 @@ class SwipeAttributes extends ComponentAttributes {
       ArgumentName.screenTrackingAttributes: screenTracker?.toJSON,
     };
   }
+
+  @override
+  String toString() =>
+      'SwipeAttributes(swipePoints: $swipePoints, className: $className'
+      '${componentId != null ? ', componentId: $componentId' : ''}'
+      '${accessibilityLabel != null ? ', accessibilityLabel: $accessibilityLabel' : ''}'
+      '${coordinates != null ? ', coordinates: $coordinates' : ''}'
+      '${screenTracker != null ? ', screen: $screenTracker' : ''}'
+      ')';
 }

@@ -35,4 +35,7 @@ class SwipePoints {
       ArgumentName.end: end.toJSON,
     };
   }
+
+  @override
+  String toString() => 'SwipePoints(start: $start, end: $end)';
 }
